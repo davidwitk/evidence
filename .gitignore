@@ -1,0 +1,7 @@
+.evidence
+.svelte-kit
+build
+node_modules
+.DS_Store
+.vscode
+.npmrc
