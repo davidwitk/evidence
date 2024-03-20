@@ -3,5 +3,8 @@
 build
 node_modules
 .DS_Store
+static/data
+sources/*/*.options.yaml
+sources/*/connection.yaml
 .vscode
 .npmrc

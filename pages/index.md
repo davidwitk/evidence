@@ -1,6 +1,5 @@
 ---
-title: Evidence Test 
+title: Home
 ---
 
-Welcome! Just trying out Evidece - BI in Markdown 😎
-
+Welcome! Just trying out Evidence - BI in Markdown 😎
