@@ -1,4 +1,6 @@
-# Temperature
+---
+title: Temperature 
+---
 
 The data in the following charts is extracted every 20 minutes from [OpenWeatherMap](https://openweathermap.org/). 
 
@@ -8,33 +10,36 @@ with
 base as (
 
 select
-    measured_at at time zone 'utc' at time zone 'europe/berlin' as measured_at,
+    measured_at_cet,
     location_name,
     max(measured_at) over (partition by location_name) = measured_at as is_latest_measurement,
-    temperature
-from analytics.fct_weather
+    temperature 
+from fct_weather
 
 )
 
 select *
 from base
 where is_latest_measurement
+order by location_name
 ```
 
-{#each temperature_latest_measurements as measurement}
+Current temperatures (in °C): 
 
-- The current temperature in <Value data={measurement} column=location_name/> is <Value data={measurement} column=temperature/>°C orders at <Value data={measurement} column=measured_at fmt=hms/>.
-
-{/each}
+<DataTable data={temperature_latest_measurements}>
+    <Column id=location_name align=center title='Location'/>
+    <Column id=measured_at_cet align=center fmt='dd/mm/yyyy H:MM' title='Time'/>
+    <Column id=temperature contentType=colorscale scaleColor=red/>
+</DataTable>
 
 
 ```sql temperature_hourly_by_location
 select 
-    date_trunc('hour', measured_at at time zone 'utc' at time zone 'europe/berlin') as date_hour, 
+    date_trunc('hour', measured_at_cet) as date_hour, 
     location_name,
     avg(temperature) as temperature_avg, 
     avg(temperature_feels_like) as temperature_feels_like_avg
-from analytics.fct_weather
+from fct_weather
 where 
     _sdc_extracted_at >= current_date - interval '7 day'
 group by 1, 2
@@ -51,11 +56,11 @@ order by 1 desc
 
 ```sql temperature_daily_by_location
 select 
-    date_trunc('day', measured_at at time zone 'utc' at time zone 'europe/berlin') as date_day, 
+    date_trunc('day', measured_at_cet) as date_day, 
     location_name,
     avg(temperature) as temperature_avg, 
     avg(temperature_feels_like) as temperature_feels_like_avg
-from analytics.fct_weather
+from fct_weather
 where 
     _sdc_extracted_at >= current_date - interval '180 day'
 group by 1, 2
