@@ -32,6 +32,20 @@ Current temperatures (in °C):
     <Column id=temperature contentType=colorscale scaleColor=red/>
 </DataTable>
 
+```sql locations
+select 
+    location_name
+from fct_weather
+group by 1
+```
+
+<Dropdown
+    name=location
+    data={locations}
+    value=location_name
+>
+    <DropdownOption value="%" valueLabel="All"/>
+</Dropdown>
 
 ```sql temperature_hourly_by_location
 select 
@@ -41,7 +55,8 @@ select
     avg(temperature_feels_like) as temperature_feels_like_avg
 from fct_weather
 where 
-    _sdc_extracted_at >= current_date - interval '7 day'
+    _sdc_extracted_at >= current_date - interval 7 day
+    and location_name like '${inputs.location.value}'
 group by 1, 2
 order by 1 desc
 ```
@@ -62,7 +77,8 @@ select
     avg(temperature_feels_like) as temperature_feels_like_avg
 from fct_weather
 where 
-    _sdc_extracted_at >= current_date - interval '180 day'
+    _sdc_extracted_at >= current_date - interval 180 day
+    and location_name like '${inputs.location.value}'
 group by 1, 2
 order by 1 desc
 ```
