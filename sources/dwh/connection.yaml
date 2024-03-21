@@ -1,0 +1,7 @@
+# This file was automatically generated
+name: dwh
+type: postgres
+options:
+  host: postgres-dwh.cjqn5ghcn4kp.eu-central-1.rds.amazonaws.com
+  port: 5432
+  database: prod
