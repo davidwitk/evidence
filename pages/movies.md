@@ -6,8 +6,8 @@ The data is based on a daily extract of the [IMDb Top 250](https://www.imdb.com/
 
 ```sql imdb_movies_new
 select 
-	title, 
-	min(extracted_at) as entry_date
+    title, 
+    min(extracted_at) as entry_date
 from fct_imdb_movies_daily
 where first_extraction_day > first_extraction_day_overall
 group by 1
