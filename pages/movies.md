@@ -165,7 +165,7 @@ select
     movie_url
 from fct_mubi_movies_weekly
 where 
-  entered_list_at = date_week :: date
+  entered_list_at = date_week
    and entered_list_at > first_extraction_day_overall
 order by 2 desc, 3 asc
 ```
@@ -173,9 +173,9 @@ order by 2 desc, 3 asc
 Movies that entered the list: 
 
 <DataTable 
-    data={mubi_movies_new}></DataTable>
+    data={mubi_movies_new}>
+</DataTable>
 
-    
     </Tab>
 </Tabs>
 
