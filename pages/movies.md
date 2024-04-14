@@ -137,9 +137,10 @@ select
     movie_title as title, 
     movie_year as year, 
     movie_rank as rank, 
+    movie_rank * -1 as rank_mirrored,
     movie_popularity as popularity
 from fct_mubi_movies_weekly
-where is_latest_day
+where date_week = (select max(date_week) from fct_mubi_movies_weekly)
 order by movie_rank asc
 ```
 
@@ -149,8 +150,35 @@ order by movie_rank asc
   y=popularity
   series=title
   title="Popularity by Year"
+  yMin=0
   xMin=1900
   xMax=2030
+  chartAreaHeight=250
+/>
+
+<ScatterPlot
+  data={mubi_latest_day}
+  x=year
+  y=rank_mirrored
+  series=title
+  title="Rank by Year"
+  yAxisTitle="Rank"
+  xMin=1900
+  xMax=2030
+  yMin=-1000
+  yMax=-1
+  chartAreaHeight=250
+/>
+
+<ScatterPlot
+  data={mubi_latest_day}
+  x=rank_mirrored
+  y=popularity
+  series=title
+  title="Rank by Popularity"
+  xAxisTitle="Rank"
+  xMin=-1000
+  xMax=-1
   chartAreaHeight=250
 />
 
