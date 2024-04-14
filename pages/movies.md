@@ -165,8 +165,8 @@ select
     movie_url
 from fct_mubi_movies_weekly
 where 
-  entered_list_at = date_week
-   and entered_list_at > first_extraction_day_overall
+    entered_list_at = date_week :: date
+    and entered_list_at > first_extraction_day_overall
 order by 2 desc, 3 asc
 ```
 
