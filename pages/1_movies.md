@@ -1,5 +1,5 @@
 ---
-title: Movies 
+title: 1.  Movies 
 ---
 
 <Tabs>
@@ -127,6 +127,39 @@ Movies that left the list:
     rows=5
 ></DataTable>
 
+Movies with large movements:
+
+```sql imdb_movies_movements
+with by_title as (
+
+    select 
+        title_first,
+        --link,
+        --first_extraction_day,
+        min(extracted_at :: date) as first_day_in_list,
+        max(extracted_at :: date) as last_day_in_list,
+        sum(case when extracted_at :: date = first_extraction_day :: date then rank else null end) as rank_first_day,
+        sum(case when extracted_at :: date = (select distinct max(extracted_at :: date) from fct_imdb_movies_daily) then rank else null end) as rank_today,
+        sum(case when extracted_at :: date = first_extraction_day :: date then rank else null end) - sum(case when extracted_at :: date = (select distinct max(extracted_at :: date) from fct_imdb_movies_daily) then rank else null end) as diff
+    from fct_imdb_movies_daily
+    where extracted_at :: date = first_extraction_day :: date
+      or extracted_at :: date = (select distinct max(extracted_at :: date ) from fct_imdb_movies_daily)
+    group by 1
+
+)
+
+select 
+    *
+from by_title
+where abs(diff) > 10
+order by diff desc nulls last
+```
+
+<DataTable 
+    data={imdb_movies_movements}>
+</DataTable>
+
+
     </Tab>
     <Tab label="Mubi Top 1000">
 
@@ -202,6 +235,36 @@ Movies that entered the list:
 
 <DataTable 
     data={mubi_movies_new}>
+</DataTable>
+
+
+```sql mubi_movies_movements
+with by_title as (
+
+    select 
+        movie_title,
+        --movie_url,
+        min(date_week :: date) as first_day_in_list,
+        max(date_week :: date) as last_day_in_list,
+        sum(case when date_week = (select distinct min(date_week) from fct_mubi_movies_weekly) then movie_rank else null end) as rank_first_day,
+        sum(case when date_week = (select distinct max(date_week) from fct_mubi_movies_weekly) then movie_rank else null end) as rank_today,
+        sum(case when date_week = (select distinct min(date_week) from fct_mubi_movies_weekly) then movie_rank else null end) - sum(case when date_week = (select distinct max(date_week) from fct_mubi_movies_weekly) then movie_rank else null end) as diff
+    from fct_mubi_movies_weekly
+    where date_week = (select distinct min(date_week) from fct_mubi_movies_weekly)
+      or date_week = (select distinct max(date_week) from fct_mubi_movies_weekly)
+    group by 1
+
+)
+
+select 
+    *
+from by_title
+where abs(diff) > 50
+order by diff desc nulls last
+```
+
+<DataTable 
+    data={mubi_movies_movements}>
 </DataTable>
 
     </Tab>

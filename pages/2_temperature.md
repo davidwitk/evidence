@@ -1,5 +1,5 @@
 ---
-title: Temperature 
+title: 2. Temperature 
 ---
 
 The data in the following charts is extracted every 20 minutes from [OpenWeatherMap](https://openweathermap.org/). 

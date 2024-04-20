@@ -2,9 +2,10 @@
 title: Home
 ---
 
-Data serving for a playground project:
+Data serving for playground projects:
 
-- 🎥 [IMDb and Mubi Data](/movies/) 
-- 💾 [Metadata on Postgres Data Warehouse](/postgres/)
-- 🌤️ [Weather](/temperature/)
-
+- 🎥 [1. IMDb and Mubi Data](/1_movies/) 
+- 🌤️ [2. Weather](/2_temperature/)
+- 💾 [3. Database Monitoring](/3_databases/)
+- 🛠️ [4. dbt](/4_dbt/)
+- 👨‍💻 [5. GitHub](/5_github/)
