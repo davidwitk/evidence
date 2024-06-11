@@ -216,18 +216,16 @@ order by movie_rank asc
 />
 
 ```sql mubi_movies_new
-select 
+select
     movie_title,
-    date_week,
-    date_add(date_trunc('week', first_extraction_day), - interval 1 day) as entered_list_at,
-    movie_rank,
+    first_extraction_day as entered_at,
+    movie_rank, 
     movie_popularity,
     movie_year,
     movie_url
 from fct_mubi_movies_weekly
-where 
-    entered_list_at = date_week :: date
-    and entered_list_at > first_extraction_day_overall
+where entered_at :: date not in ('2023-01-28', '2023-01-29') -- Days of first extraction
+qualify row_number() over (partition by movie_id order by date_week) = 1
 order by 2 desc, 3 asc
 ```
 
@@ -237,6 +235,8 @@ Movies that entered the list:
     data={mubi_movies_new}>
 </DataTable>
 
+
+Movies with large movements:
 
 ```sql mubi_movies_movements
 with by_title as (
