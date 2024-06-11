@@ -224,7 +224,7 @@ select
     movie_year,
     movie_url
 from fct_mubi_movies_weekly
-where entered_at :: date != '2023-01-28' -- Day of first extraction
+where entered_at :: date not in ('2023-01-28', '2023-01-29') -- Days of first extraction
 qualify row_number() over (partition by movie_id order by date_week) = 1
 order by 2 desc, 3 asc
 ```
