@@ -160,6 +160,16 @@ order by diff desc nulls last
 </DataTable>
 
 
+```sql commits
+select count(distinct movie_id) as movie_count
+from fact_imdb
+```
+
+<BigValue 
+  data={commits} 
+  value=movie_count
+/>
+
     </Tab>
     <Tab label="Mubi Top 1000">
 
