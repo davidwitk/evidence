@@ -4,32 +4,22 @@ title: 2. Temperature
 
 The data in the following charts is extracted every 20 minutes from [OpenWeatherMap](https://openweathermap.org/). 
 
-```sql temperature_latest_measurements
-with
-
-base as (
-
-select
-    measured_at_cet,
+```sql temperature_yesterday
+ select
     location_name,
-    max(measured_at) over (partition by location_name) = measured_at as is_latest_measurement,
-    temperature 
+    date_trunc('day', measured_at) as measured_date,
+    avg(temperature) as temperature_avg
 from fct_weather
-
-)
-
-select *
-from base
-where is_latest_measurement
-order by location_name
+where date_trunc('day', measured_at) =  current_date - INTERVAL '1 DAY'
+group by 1, 2
+order by 1
 ```
 
-Current temperatures (in °C): 
+Yesterday's (<Value data={temperature_yesterday} column=measured_date/>) average temperatures (in °C): 
 
-<DataTable data={temperature_latest_measurements}>
+<DataTable data={temperature_yesterday}>
     <Column id=location_name align=center title='Location'/>
-    <Column id=measured_at_cet align=center fmt='dd/mm/yyyy H:MM' title='Time'/>
-    <Column id=temperature contentType=colorscale scaleColor=red/>
+    <Column id=temperature_avg align=center contentType=colorscale scaleColor=red/>
 </DataTable>
 
 ```sql locations
