@@ -6,4 +6,5 @@ node_modules
 static/data
 *.options.yaml
 .vscode
+.env
 .npmrc
