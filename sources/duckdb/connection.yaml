@@ -1,5 +1,4 @@
 # This file was automatically generated
 name: duckdb
-type: duckdb
-options:
-  filename: x
+type: motherduck
+options: {}
