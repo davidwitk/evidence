@@ -351,6 +351,48 @@ order by 1, 2 desc
     title="Movies by Watch Month & Decade"
     labels=true
 />
+
+```sql letterboxd_diary_genre
+select
+    trim(genre) as genre, 
+    count(*) as movie_count
+from
+    fct_letterboxd_diary,
+    unnest(string_split(genres, ',')) AS t(genre)
+group by all
+order by count(*) desc
+```
+
+<BarChart 
+    data={letterboxd_diary_genre}
+    x=genre
+    y=movie_count
+    title="Movies by Genre"
+    labels=true
+    swapXY=true
+/>
+
+
+```sql letterboxd_diary_country
+select
+    trim(country) as country, 
+    count(*) as movie_count
+from
+    fct_letterboxd_diary,
+    unnest(string_split(countries, ',')) AS t(country)
+group by all
+order by count(*) desc
+```
+
+<BarChart 
+    data={letterboxd_diary_country}
+    x=country
+    y=movie_count
+    title="Movies by Country"
+    labels=true
+    swapXY=true
+/>
+
 </Tab>
 
 </Tabs>
