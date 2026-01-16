@@ -315,10 +315,29 @@ order by 1, 2
     labels=true
 />
 
+```sql letterboxd_day_of_week
+select
+    extract('isodow' from watch_date) as day_of_week_number,
+    strftime(watch_date, '%A') as day_of_week,
+    count(*) as movie_count
+from fct_letterboxd_diary
+group by all
+order by day_of_week_number;
+```
+
+<BarChart 
+    data={letterboxd_day_of_week}
+    x=day_of_week
+    y=movie_count
+    title="Movies by Watch Day of Week"
+    labels=true
+    sort=false
+/>
+
 ```sql letterboxd_diary_decade
 select
     ((floor(year / 10) * 10) :: int) :: string || 's' as decade, 
-    count(*) as movie_count
+    count(distinct imdb_id) as movie_count
 from fct_letterboxd_diary
 group by all 
 order by 1
@@ -328,7 +347,7 @@ order by 1
     data={letterboxd_diary_decade}
     x=decade
     y=movie_count
-    title="Movies by Decade"
+    title="Distinct Movies by Decade"
     labels=true
     swapXY=true
 />
@@ -355,7 +374,7 @@ order by 1, 2 desc
 ```sql letterboxd_diary_genre
 select
     trim(genre) as genre, 
-    count(*) as movie_count
+    count(distinct imdb_id) as movie_count
 from
     fct_letterboxd_diary,
     unnest(string_split(genres, ',')) AS t(genre)
@@ -367,7 +386,7 @@ order by count(*) desc
     data={letterboxd_diary_genre}
     x=genre
     y=movie_count
-    title="Movies by Genre"
+    title="Distinct Movies by Genre"
     labels=true
     swapXY=true
 />
@@ -376,7 +395,7 @@ order by count(*) desc
 ```sql letterboxd_diary_country
 select
     trim(country) as country, 
-    count(*) as movie_count
+    count(distinct imdb_id) as movie_count
 from
     fct_letterboxd_diary,
     unnest(string_split(countries, ',')) AS t(country)
@@ -388,7 +407,7 @@ order by count(*) desc
     data={letterboxd_diary_country}
     x=country
     y=movie_count
-    title="Movies by Country"
+    title="Distinct Movies by Country"
     labels=true
     swapXY=true
 />
