@@ -93,19 +93,3 @@ order by 3 desc
 <DataTable 
     data={largest_tables}>
 </DataTable>
-
-# Nextcloud
-
-## Nextcloud Used Disk Space
-
-```sql nextcloud_disk_space
-select * from fct_nextcloud_disk_space
-order by 1, 2
-```
-
-<LineChart
-  data={nextcloud_disk_space}
-  x=date_day
-  y=size_used_percentage
-  series=mount_path
-/>
