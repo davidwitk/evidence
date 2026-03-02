@@ -1,1 +1,1 @@
-select * from analytics.fact_imdb
+select * from prod.analytics.fact_imdb

@@ -34,6 +34,36 @@ from fct_github_pull_requests
 
 ## Commits
 
+```sql repository_list
+with 
+
+commits_by_repo as (
+
+select 
+    repo_full_name, 
+    count(*) as commit_count
+from fct_github_commits
+group by 1
+
+)
+
+select 
+    full_name as name, 
+    created_at :: date as create_date, 
+    updated_at as update_date,
+    description, 
+    language,
+    commit_count
+from dim_github_repositories 
+left join commits_by_repo 
+  on dim_github_repositories.full_name = commits_by_repo.repo_full_name
+order by commit_count desc
+```
+
+<DataTable 
+    data={repository_list}>
+</DataTable>
+
 ```sql commits_monthly
 select
     date_trunc('month', created_at) as date_month,
@@ -53,57 +83,21 @@ order by 1
 ```sql commits_monthly_by_repo
 select
     (date_trunc('month', created_at)) :: varchar as date_month,
-    repository_name,
+    replace(repo_full_name, 'davidwitk/', '') as repository_name,
     count(*) as commit_count
 from fct_github_commits
 where date_month >= '2023-01-01'
 group by 1, 2
---order by 1, 2
+order by 1 desc, 2
 ```
 
-<!---
-Deactivated as there seems to be a bug, the table is not rendered
 <Heatmap 
     data={commits_monthly_by_repo} 
     x=repository_name 
     y=date_month 
-    value=commit_count 
-    xLabelRotation=-45
-    colorPalette={['white', 'maroon']} 
+    value=commit_count
+    xLabelRotation=-90
     title="Commit Count"
     subtitle="By Repository"
-    rightPadding=40
-    cellHeight=25,
-    legend=false
+    colorPalette={['white', 'maroon']} 
 />
--->
-
-
-```sql repository_list
-with 
-
-commits_by_repo as (
-
-select 
-    repository_id, 
-    count(*) as commit_count
-from fct_github_commits
-group by 1
-
-)
-
-select 
-    name, 
-    created_at :: date as create_date, 
-    updated_at as update_date,
-    description, 
-    language,
-    commit_count
-from dim_github_repositories 
-left join commits_by_repo using (repository_id)
-order by commit_count desc
-```
-
-<DataTable 
-    data={repository_list}>
-</DataTable>
