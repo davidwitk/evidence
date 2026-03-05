@@ -1,8 +1,8 @@
 ---
-title: "3. Database Monitoring"
+title: 🚧 3. Data Lake Monitoring
 ---
 
-# Postgres Data Warehouse
+# S3 Data Lake
 
 ```sql latest_day
 select 
