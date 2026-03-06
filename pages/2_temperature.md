@@ -1,16 +1,16 @@
 ---
-title: 🚧 2. Temperature 
+title: 2. Temperature 
 ---
 
 The data in the following charts is extracted every 20 minutes from [OpenWeatherMap](https://openweathermap.org/). 
 
 ```sql temperature_yesterday
- select
+select
     location_name,
     date_trunc('day', measured_at) as measured_date,
-    avg(temperature) as temperature_avg
+    round(avg(temperature), 2) as temperature_avg
 from fct_weather
-where date_trunc('day', measured_at) =  current_date - INTERVAL '1 DAY'
+where date_trunc('day', measured_at) = current_date - INTERVAL '1 DAY'
 group by 1, 2
 order by 1
 ```
@@ -45,7 +45,7 @@ select
     avg(temperature_feels_like) as temperature_feels_like_avg
 from fct_weather
 where 
-    _sdc_extracted_at >= current_date - interval 7 day
+    _extracted_at >= current_date - interval 7 day
     and location_name like '${inputs.location.value}'
 group by 1, 2
 order by 1 desc
@@ -67,7 +67,7 @@ select
     avg(temperature_feels_like) as temperature_feels_like_avg
 from fct_weather
 where 
-    _sdc_extracted_at >= current_date - interval 180 day
+    _extracted_at >= current_date - interval 180 day
     and location_name like '${inputs.location.value}'
 group by 1, 2
 order by 1 desc
