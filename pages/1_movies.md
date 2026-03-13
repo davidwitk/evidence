@@ -124,7 +124,6 @@ order by count(*) desc
     swapXY=true
 />
 
-
 ```sql letterboxd_diary_country
 select
     trim(country) as country, 
@@ -143,6 +142,25 @@ order by count(*) desc
     title="Distinct Movies by Country"
     labels=true
     swapXY=true
+/>
+
+```sql letterboxd_rating
+select
+    rating as rating, 
+    count(distinct imdb_id) as movie_count
+from fct_letterboxd_diary
+where rating is not null
+group by 1
+order by 1 asc
+```
+
+<BarChart 
+    data={letterboxd_rating}
+    x=rating
+    y=movie_count
+    title="Distinct Movies by Rating"
+    labels=true
+    xMax=5
 />
 
 </Tab>
