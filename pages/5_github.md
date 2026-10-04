@@ -2,6 +2,20 @@
 title: 5. GitHub
 ---
 
+```sql github_date_bounds
+select created_at::date as activity_date
+from fct_github_commits
+union all
+select created_at::date as activity_date
+from fct_github_pull_requests
+```
+
+```sql github_monthly_date_bounds
+select created_at::date as activity_date
+from fct_github_commits
+where created_at::date >= '2023-01-01'
+```
+
 ```sql repositories
 select count(*) as repository_count
 from dim_github_repositories
@@ -64,12 +78,19 @@ order by commit_count desc
     data={repository_list}>
 </DataTable>
 
+<DateRange
+  name=monthly_commit_dates
+  data={github_monthly_date_bounds}
+  dates=activity_date
+  title="Commit date"
+/>
+
 ```sql commits_monthly
 select
     date_trunc('month', created_at) as date_month,
     count(*) as commit_count
 from fct_github_commits
-where date_month >= '2023-01-01'
+where created_at::date between '${inputs.monthly_commit_dates.start}' and '${inputs.monthly_commit_dates.end}'
 group by 1
 order by 1 
 ```
@@ -80,13 +101,20 @@ order by 1
     y=commit_count 
 />
 
+<DateRange
+  name=repo_commit_dates
+  data={github_monthly_date_bounds}
+  dates=activity_date
+  title="Commit date"
+/>
+
 ```sql commits_monthly_by_repo
 select
     (date_trunc('month', created_at)) :: varchar as date_month,
     replace(repo_full_name, 'davidwitk/', '') as repository_name,
     count(*) as commit_count
 from fct_github_commits
-where date_month >= '2023-01-01'
+where created_at::date between '${inputs.repo_commit_dates.start}' and '${inputs.repo_commit_dates.end}'
 group by 1, 2
 order by 1 desc, 2
 ```

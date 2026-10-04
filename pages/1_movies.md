@@ -6,12 +6,25 @@ title: 1.  Movies
 
 <Tab label="Letterboxd">
 
+```sql letterboxd_date_bounds
+select watch_date as date_day
+from fct_letterboxd_diary
+```
+
+<DateRange
+    name=letterboxd_dates
+    data={letterboxd_date_bounds}
+    dates=date_day
+    title="Watch date"
+/>
+
 ```sql letterboxd_diary_summary
 select 
     count(*) as total_movies_logged,
     sum(case when date_trunc('year', watch_date) = date_trunc('year', current_date) then 1 else 0 end) total_movies_watched_current_year,
     sum(case when date_trunc('year', watch_date) = date_trunc('year', current_date - interval 1 year) then 1 else 0 end) as total_movies_watched_previous_year
 from fct_letterboxd_diary
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 ```
 
 <BigValue 
@@ -35,6 +48,7 @@ select
     screen_type,
     count(*) as movie_count
 from fct_letterboxd_diary
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by all 
 order by 1, 2
 ```
@@ -54,6 +68,7 @@ select
     strftime(watch_date, '%A') as day_of_week,
     count(*) as movie_count
 from fct_letterboxd_diary
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by all
 order by day_of_week_number;
 ```
@@ -91,6 +106,7 @@ select
     (floor(year / 10) * 10)::int as decade, 
     count(*) as movie_count
 from fct_letterboxd_diary
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by all 
 order by 1, 2 desc
 ```
@@ -111,6 +127,7 @@ select
 from
     fct_letterboxd_diary,
     unnest(string_split(genres, ',')) AS t(genre)
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by all
 order by count(*) desc
 ```
@@ -131,6 +148,7 @@ select
 from
     fct_letterboxd_diary,
     unnest(string_split(countries, ',')) AS t(country)
+where watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by all
 order by count(*) desc
 ```
@@ -150,6 +168,7 @@ select
     count(distinct imdb_id) as movie_count
 from fct_letterboxd_diary
 where rating is not null
+    and watch_date between '${inputs.letterboxd_dates.start}' and '${inputs.letterboxd_dates.end}'
 group by 1
 order by 1 asc
 ```
@@ -169,6 +188,19 @@ order by 1 asc
 
 The data is based on a daily extract of the [IMDb Top 250](https://www.imdb.com/chart/top/). 
 
+```sql imdb_date_bounds
+select extracted_at::date as extraction_date
+from fct_imdb_movies_daily
+```
+
+<DateRange
+    name=imdb_dates
+    data={imdb_date_bounds}
+    dates=extraction_date
+    title="IMDb extraction date"
+    defaultValue="Last Year"
+/>
+
 ```sql imdb_movies_new_daily
 with 
 
@@ -179,6 +211,7 @@ base as (
         min(rank) over (partition by title) as rank_min
     from fct_imdb_movies_daily
     where first_extraction_day > first_extraction_day_overall
+            and extracted_at::date between '${inputs.imdb_dates.start}' and '${inputs.imdb_dates.end}'
 
 )
 

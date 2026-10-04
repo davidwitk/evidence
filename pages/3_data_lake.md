@@ -4,6 +4,11 @@ title: 3. Data Lake Monitoring
 
 # S3 Data Lake
 
+```sql inventory_date_bounds
+select extracted_date
+from fact_s3_file_inventory
+```
+
 ```sql latest_day
 select 
     round(sum(size_mb), 2) as size_mb,
@@ -37,9 +42,17 @@ select
     extracted_date as date_day,
     sum(size_mb) as size_mb
 from fact_s3_file_inventory
+where extracted_date between '${inputs.inventory_by_day_dates.start}' and '${inputs.inventory_by_day_dates.end}'
 group by 1
 order by 1
 ```
+
+<DateRange
+  name=inventory_by_day_dates
+  data={inventory_date_bounds}
+  dates=extracted_date
+  title="Inventory date"
+/>
 
 <LineChart
   data={by_day}

@@ -2,6 +2,18 @@
 title: 4. dbt Jobs
 ---
 
+```sql dbt_date_bounds
+select run_started_at::date as run_date
+from fct_dbt_invocations
+```
+
+<DateRange
+    name=dbt_time_dates
+    data={dbt_date_bounds}
+    dates=run_date
+    title="Run date"
+/>
+
 ## Daily Total Runtime of Prod Run (Seconds)
 
 ```sql prod_run_daily
@@ -18,6 +30,7 @@ select
     models.total_node_runtime
 from fct_dbt_model_executions as models
 left join fct_dbt_invocations as invocations using (command_invocation_id)
+where models.run_started_at::date between '${inputs.dbt_time_dates.start}' and '${inputs.dbt_time_dates.end}'
 
 )
 
@@ -40,7 +53,7 @@ group by all
 ## Daily Average Model Runtime of Prod Run (Seconds)
 
 <LineChart
-  data={prod_run_daily}
+    data={prod_run_daily}
   x=date_day
   y=avg_runtime
 />
@@ -52,6 +65,7 @@ select
     dbt_version,
     count(*) as run_count
 from fct_dbt_invocations
+where run_started_at::date between '${inputs.dbt_time_dates.start}' and '${inputs.dbt_time_dates.end}'
 group by 1, 2
 order by 1, 2 asc
 ```
@@ -88,7 +102,8 @@ select
     materialization,
     total_node_runtime
 from base 
-where run_started_at = (select max(run_started_at) from fct_dbt_model_executions)
+where run_started_at = (select max(run_started_at) from fct_dbt_model_executions
+)
 order by total_node_runtime desc
 ```
 
