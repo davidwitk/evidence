@@ -7,7 +7,7 @@ title: 1.  Movies
 <Tab label="Letterboxd">
 
 ```sql letterboxd_date_bounds
-select watch_date as date_day
+select unnest([min(watch_date), max(watch_date)]) as date_day
 from fct_letterboxd_diary
 ```
 
@@ -189,7 +189,7 @@ order by 1 asc
 The data is based on a daily extract of the [IMDb Top 250](https://www.imdb.com/chart/top/). 
 
 ```sql imdb_date_bounds
-select extracted_at::date as extraction_date
+select unnest([min(extracted_at::date), max(extracted_at::date)]) as extraction_date
 from fct_imdb_movies_daily
 ```
 

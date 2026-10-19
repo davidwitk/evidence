@@ -5,7 +5,7 @@ title: 2. Temperature
 The data in the following charts is extracted every 20 minutes from [OpenWeatherMap](https://openweathermap.org/). 
 
 ```sql temperature_date_bounds
-select measured_at_cet as measured_date
+select unnest([min(measured_at_cet), max(measured_at_cet)]) as measured_date
 from fct_weather
 ```
 

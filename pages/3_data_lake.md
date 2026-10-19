@@ -5,7 +5,7 @@ title: 3. Data Lake Monitoring
 # S3 Data Lake
 
 ```sql inventory_date_bounds
-select extracted_date
+select unnest([min(extracted_date), max(extracted_date)]) as extracted_date
 from fact_s3_file_inventory
 ```
 

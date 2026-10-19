@@ -3,7 +3,7 @@ title: 4. dbt Jobs
 ---
 
 ```sql dbt_date_bounds
-select run_started_at::date as run_date
+select unnest([min(run_started_at::date), max(run_started_at::date)]) as run_date
 from fct_dbt_invocations
 ```
 

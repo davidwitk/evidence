@@ -2,16 +2,8 @@
 title: 5. GitHub
 ---
 
-```sql github_date_bounds
-select created_at::date as activity_date
-from fct_github_commits
-union all
-select created_at::date as activity_date
-from fct_github_pull_requests
-```
-
 ```sql github_monthly_date_bounds
-select created_at::date as activity_date
+select unnest([min(created_at::date), max(created_at::date)]) as activity_date
 from fct_github_commits
 where created_at::date >= '2023-01-01'
 ```
